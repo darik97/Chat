@@ -1,20 +1,27 @@
 package client;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.logging.Logger;
 
-public class ClientGUI extends JPanel {
+class ClientGUI extends JPanel {
+    String UserName;
+    ClientObject clientObject;
 
-    JTextField userName = new JTextField();
+    private static Logger log = Logger.getLogger(ClientGUI.class.getName());
+
+    JTextField usernameBox = new JTextField();
     JButton signInButton = new JButton("Sign in");
     JButton signOutButton = new JButton("Sign out");
 
     JTextArea chatBox = new JTextArea();
-    JTextField messageBox = new JTextField();
+    JTextArea messageBox = new JTextArea();
     JButton sendButton = new JButton("Send");
 
-    public ClientGUI() {
+    ClientGUI() {
         setLayout(null);
         setFocusable(true);
         grabFocus();
@@ -23,11 +30,11 @@ public class ClientGUI extends JPanel {
         jLabel.setBounds(10,10,100,30);
         add(jLabel);
 
-        userName.setBounds(120,10,270,30);
-        add(userName);
+        usernameBox.setBounds(120,10,270,30);
+        add(usernameBox);
 
         signInButton.setBounds(400,10,100,30);
-        signInButton.setEnabled(false);
+//        signInButton.setEnabled(false);
         add(signInButton);
 
         signOutButton.setBounds(510,10,100,30);
@@ -38,6 +45,8 @@ public class ClientGUI extends JPanel {
         chatBox.setEditable(false);
         chatBox.setVisible(true);
         chatBox.setLineWrap(true);
+//        DefaultCaret caret = (DefaultCaret)chatBox.getCaret();
+//        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         JScrollPane scroll = new JScrollPane(chatBox);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 //        add(scroll);
@@ -51,10 +60,10 @@ public class ClientGUI extends JPanel {
         sendButton.setEnabled(false);
         add(sendButton);
 
-        userName.addKeyListener(new KeyAdapter() {
+        usernameBox.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER && userName.getText().trim() != "") {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && usernameBox.getText().trim().length() > 0) {
                     signInButton_Click();
                 }
             }
@@ -66,23 +75,79 @@ public class ClientGUI extends JPanel {
         messageBox.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER && userName.getText().trim() != "") {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && usernameBox.getText().trim().length() > 0) {
                     sendButton_Click();
+                }
+                if (usernameBox.getText().trim().length() > 0) {
+                    signInButton.setEnabled(true);
+                } else {
+                    signInButton.setEnabled(false);
                 }
             }
         });
         sendButton.addActionListener(e->sendButton_Click());
+
+        log.info("Chat GUI created");
     }
 
     private void signInButton_Click() {
+        log.info("Sign in button pressed");
 
+        if (usernameBox.getText().trim().length() > 0) {
+            UserName = usernameBox.getText().trim();
+
+            usernameBox.setEnabled(false);
+            signInButton.setEnabled(false);
+            signOutButton.setEnabled(true);
+            messageBox.setEnabled(true);
+            sendButton.setEnabled(true);
+            messageBox.requestFocusInWindow();
+
+            clientObject = new ClientObject(this);
+            new Thread(clientObject).start();
+        } else {
+            showErrorMessage("Fill the name!");
+            log.info("Field name is empty");
+        }
     }
 
     private void signOutButton_Click() {
+        log.info("Sign out button pressed");
 
+        signInButton.setEnabled(true);
+        signOutButton.setEnabled(false);
+        usernameBox.setEnabled(true);
+        messageBox.setText("");
+        chatBox.setText("");
+        messageBox.setEnabled(false);
+        sendButton.setEnabled(false);
+
+        clientObject.disconnect();
     }
 
     private void sendButton_Click() {
+        log.info("Send button pressed");
 
+        if (messageBox.getText().trim().length() > 0) {
+            String message = messageBox.getText();
+            clientObject.sendMessage(message);
+
+            messageBox.requestFocus();
+            messageBox.setText("");
+        }
+    }
+
+    void printMessage(String message) {
+        chatBox.setText(String.format("%s\n%s", chatBox.getText(), message));
+//        chatBox.append(message + "\n");
+//        chatBox.scrollRectToVisible(chatBox.getVisibleRect());
+//        chatBox.paint(chatBox.getGraphics());
+
+        log.info("Chat history updated");
+    }
+
+    void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(null,message);
+        log.info(message);
     }
 }
