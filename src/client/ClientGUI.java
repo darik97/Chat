@@ -4,22 +4,21 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 class ClientGUI extends JPanel {
     String UserName;
-    ClientObject clientObject;
+    private ClientObject clientObject;
 
     private static Logger log = Logger.getLogger(ClientGUI.class.getName());
 
-    JTextField usernameBox = new JTextField();
-    JButton signInButton = new JButton("Sign in");
-    JButton signOutButton = new JButton("Sign out");
+    private JTextField usernameBox = new JTextField();
+    private JButton signInButton = new JButton("Sign in");
+    private JButton signOutButton = new JButton("Sign out");
 
-    JTextArea chatBox = new JTextArea();
-    JTextArea messageBox = new JTextArea();
-    JButton sendButton = new JButton("Send");
+    private JTextArea chatBox = new JTextArea();
+    private JTextArea messageBox = new JTextArea();
+    private JButton sendButton = new JButton("Send");
 
     ClientGUI() {
         setLayout(null);
@@ -45,8 +44,10 @@ class ClientGUI extends JPanel {
         chatBox.setEditable(false);
         chatBox.setVisible(true);
         chatBox.setLineWrap(true);
-//        DefaultCaret caret = (DefaultCaret)chatBox.getCaret();
-//        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        DefaultCaret caret = (DefaultCaret)chatBox.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
         JScrollPane scroll = new JScrollPane(chatBox);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 //        add(scroll);
@@ -138,10 +139,9 @@ class ClientGUI extends JPanel {
     }
 
     void printMessage(String message) {
-        chatBox.setText(String.format("%s\n%s", chatBox.getText(), message));
-//        chatBox.append(message + "\n");
-//        chatBox.scrollRectToVisible(chatBox.getVisibleRect());
-//        chatBox.paint(chatBox.getGraphics());
+        chatBox.append(message + "\n");
+        chatBox.scrollRectToVisible(chatBox.getVisibleRect());
+        chatBox.paint(chatBox.getGraphics());
 
         log.info("Chat history updated");
     }
