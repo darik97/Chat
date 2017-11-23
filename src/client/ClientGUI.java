@@ -33,7 +33,7 @@ class ClientGUI extends JPanel {
         add(usernameBox);
 
         signInButton.setBounds(400,10,100,30);
-//        signInButton.setEnabled(false);
+        signInButton.setEnabled(false);
         add(signInButton);
 
         signOutButton.setBounds(510,10,100,30);
@@ -67,6 +67,11 @@ class ClientGUI extends JPanel {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER && usernameBox.getText().trim().length() > 0) {
                     signInButton_Click();
                 }
+                if (usernameBox.getText().trim().length() > 0) {
+                    signInButton.setEnabled(true);
+                } else {
+                    signInButton.setEnabled(false);
+                }
             }
         });
         signInButton.addActionListener(e->signInButton_Click());
@@ -78,11 +83,6 @@ class ClientGUI extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER && usernameBox.getText().trim().length() > 0) {
                     sendButton_Click();
-                }
-                if (usernameBox.getText().trim().length() > 0) {
-                    signInButton.setEnabled(true);
-                } else {
-                    signInButton.setEnabled(false);
                 }
             }
         });

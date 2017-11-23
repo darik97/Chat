@@ -1,12 +1,9 @@
 package client;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 class ClientObject implements Runnable {
     private String host = "127.0.0.1";
@@ -28,6 +25,7 @@ class ClientObject implements Runnable {
             output.writeUTF(message);
             output.flush();
         } catch (IOException e) {
+            clientGUI.showErrorMessage(e.getMessage());
             log.log(Level.SEVERE, Arrays.toString(e.getStackTrace()));
         }
         log.fine("Message is sent");
@@ -50,6 +48,7 @@ class ClientObject implements Runnable {
                 clientGUI.printMessage(message);
             }
         } catch (IOException e) {
+            clientGUI.showErrorMessage(e.getMessage());
             log.log(Level.SEVERE, Arrays.toString(e.getStackTrace()));
         }
     }
