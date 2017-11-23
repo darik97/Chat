@@ -16,7 +16,7 @@ class ClientGUI extends JPanel {
     private JButton signInButton = new JButton("Sign in");
     private JButton signOutButton = new JButton("Sign out");
 
-    private JTextArea chatBox = new JTextArea();
+    private JTextArea chatBox = new JTextArea(10,10);
     private JTextArea messageBox = new JTextArea();
     private JButton sendButton = new JButton("Send");
 
@@ -40,7 +40,6 @@ class ClientGUI extends JPanel {
         signOutButton.setEnabled(false);
         add(signOutButton);
 
-        chatBox.setBounds(10,50,600,300);
         chatBox.setEditable(false);
         chatBox.setVisible(true);
         chatBox.setLineWrap(true);
@@ -49,9 +48,9 @@ class ClientGUI extends JPanel {
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         JScrollPane scroll = new JScrollPane(chatBox);
+        scroll.setBounds(10,50,600,300);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-//        add(scroll);
-        add(chatBox);
+        add(scroll);
 
         messageBox.setBounds(10,360,490,100);
         messageBox.setEnabled(false);
@@ -97,15 +96,9 @@ class ClientGUI extends JPanel {
         if (usernameBox.getText().trim().length() > 0) {
             UserName = usernameBox.getText().trim();
 
-            usernameBox.setEnabled(false);
-            signInButton.setEnabled(false);
-            signOutButton.setEnabled(true);
-            messageBox.setEnabled(true);
-            sendButton.setEnabled(true);
-            messageBox.requestFocusInWindow();
-
             clientObject = new ClientObject(this);
             new Thread(clientObject).start();
+
         } else {
             showErrorMessage("Fill the name!");
             log.info("Field name is empty");
@@ -149,5 +142,14 @@ class ClientGUI extends JPanel {
     void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(null,message);
         log.info(message);
+    }
+
+    void startGUI() {
+        usernameBox.setEnabled(false);
+        signInButton.setEnabled(false);
+        signOutButton.setEnabled(true);
+        messageBox.setEnabled(true);
+        sendButton.setEnabled(true);
+        messageBox.requestFocusInWindow();
     }
 }

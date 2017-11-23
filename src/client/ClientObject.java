@@ -31,10 +31,12 @@ class ClientObject implements Runnable {
         log.fine("Message is sent");
     }
 
-    public void run() /*throws IOException, InterruptedException*/ {
+    public void run() {
         try {
             client = new Socket(host, port);
             log.info("Client socket created");
+
+            clientGUI.startGUI();
 
             DataInputStream inputStream = new DataInputStream(client.getInputStream());
             log.info("Input stream got");
